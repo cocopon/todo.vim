@@ -1,0 +1,71 @@
+" TODO: Place data to right path
+let s:data_path = expand('~/todovim-test.txt')
+let s:data_loaded = 0
+let s:data = {}
+
+" Load/Save {{{
+function! todo#store#save()
+	let data_string = string(s:data)
+	let data_list = split(data_string, "\<NL>")
+	call writefile(data_list, expand(s:data_path))
+endfunction
+
+function! todo#store#load(force_reload)
+	if s:data_loaded && !a:force_reload
+		return
+	elseif !filereadable(s:data_path)
+		return
+	endif
+
+	let data_list = readfile(s:data_path)
+	let data_string = join(data_list, "\<NL>")
+	let s:data = eval(data_string)
+	let s:data_loaded = 1
+endfunction
+" }}}
+
+
+function! todo#store#reset()
+	let s:data = {}
+	call todo#store#save()
+endfunction
+
+
+" Tasks {{{
+function! todo#store#tasks(date)
+	if !s:data_loaded
+		call todo#store#load(0)
+	endif
+
+	if empty(a:date)
+		" TODO: Throw appropriate exception
+		throw 'Error'
+	endif
+
+	let date_str = todo#date#encode(a:date)
+	let tasks = get(s:data, date_str, [])
+
+	if len(tasks) == 0
+		let s:data[date_str] = tasks
+	endif
+
+	return tasks
+endfunction
+
+function! todo#store#all_tasks()
+	if !s:data_loaded
+		call todo#store#load(0)
+	endif
+
+	let result = []
+
+	for tasks in values(s:data)
+		call extend(result, tasks)
+	endfor
+
+	return result
+endfunction
+" }}}
+
+
+ " vim: set foldmethod=marker:
