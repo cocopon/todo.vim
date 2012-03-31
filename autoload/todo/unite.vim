@@ -25,18 +25,18 @@ function! s:separator_candidate(date)
 				\ }
 endfunction
 
-let s:unite_sorter = {
-			\ 	'name': 'todo/sorter'
+let s:filter_sort = {
+			\ 	'name': 'sorter_todo'
 			\ }
-function! s:unite_sorter.filter(candidates, context)
+function! s:filter_sort.filter(candidates, context)
 	let result = copy(a:candidates)
 	return sort(result, 's:compare_candidate')
 endfunction
 
-let s:unite_filter_today = {
-			\ 	'name': 'today'
+let s:filter_today = {
+			\ 	'name': 'matcher_todo/today'
 			\ }
-function! s:unite_filter_today.filter(candidates, context)
+function! s:filter_today.filter(candidates, context)
 	let today = todo#date#today()
 	let result = []
 
@@ -50,10 +50,10 @@ function! s:unite_filter_today.filter(candidates, context)
 	return result
 endfunction
 
-let s:unite_filter_completed = {
-			\ 	'name': 'completed'
+let s:filter_completed = {
+			\ 	'name': 'matcher_todo/completed'
 			\ }
-function! s:unite_filter_completed.filter(candidates, context)
+function! s:filter_completed.filter(candidates, context)
 	let result = []
 
 	for candidate in a:candidates
@@ -66,10 +66,10 @@ function! s:unite_filter_completed.filter(candidates, context)
 	return result
 endfunction
 
-let s:unite_filter_incompleted = {
-			\ 	'name': 'incompleted'
+let s:filter_incompleted = {
+			\ 	'name': 'matcher_todo/incompleted'
 			\ }
-function! s:unite_filter_incompleted.filter(candidates, context)
+function! s:filter_incompleted.filter(candidates, context)
 	let result = []
 
 	for candidate in a:candidates
@@ -82,10 +82,10 @@ function! s:unite_filter_incompleted.filter(candidates, context)
 	return result
 endfunction
 
-let s:unite_filter_separator = {
-			\ 	'name': 'todo/separator'
+let s:filter_separate = {
+			\ 	'name': 'converter_todo/separate'
 			\ }
-function! s:unite_filter_separator.filter(candidates, context)
+function! s:filter_separate.filter(candidates, context)
 	let result = []
 
 	let date = todo#date#empty()
@@ -107,38 +107,38 @@ endfunction
 
 
 " Source {{{
-let s:unite_source_default = {
+let s:source_default = {
 			\ 	'name': 'todo',
-			\ 	'filters': ['incompleted', 'todo/sorter', 'matcher_default', 'todo/separator'],
+			\ 	'filters': ['matcher_todo/incompleted', 'sorter_todo', 'matcher_default', 'converter_todo/separate'],
 			\ 	'gather_candidates': function('todo#unite#all_tasks')
 			\ }
-let s:unite_source_all = {
+let s:source_all = {
 			\ 	'name': 'todo/all',
-			\ 	'filters': ['todo/sorter', 'matcher_default', 'todo/separator'],
+			\ 	'filters': ['sorter_todo', 'matcher_default', 'converter_todo/separate'],
 			\ 	'gather_candidates': function('todo#unite#all_tasks')
 			\ }
-let s:unite_source_today = {
+let s:source_today = {
 			\ 	'name': 'todo/today',
-			\ 	'filters': ['today', 'todo/sorter', 'matcher_default', 'todo/separator'],
+			\ 	'filters': ['matcher_todo/today', 'sorter_todo', 'matcher_default', 'converter_todo/separate'],
 			\ 	'gather_candidates': function('todo#unite#all_tasks')
 			\ }
 " }}}
 
 
 " Kind {{{
-let s:unite_kind = {
+let s:kind = {
 			\ 	'name': 'todo',
 			\ 	'default_action': 'toggle',
 			\ 	'action_table': {},
 			\ 	'parents': []
 			\ }
 
-let s:unite_kind.action_table.toggle = {
+let s:kind.action_table.toggle = {
 			\ 	'description': 'toggle completion',
 			\ 	'is_invalidate_cache': 1,
 			\ 	'is_quit': 0
 			\ }
-function! s:unite_kind.action_table.toggle.func(candidates)
+function! s:kind.action_table.toggle.func(candidates)
 	let task = a:candidates.action__task
 	let task.completed = task.completed ? 0 : 1
 	call todo#task#update(task)
@@ -158,30 +158,30 @@ function! s:set_candidates_state(candidates, state)
 	endfor
 endfunction
 
-let s:unite_kind.action_table.check = {
+let s:kind.action_table.check = {
 			\ 	'description': 'mark task as complete',
 			\ 	'is_invalidate_cache': 1,
 			\ 	'is_selectable': 1,
 			\ 	'is_quit': 0
 			\ }
-function! s:unite_kind.action_table.check.func(candidates)
+function! s:kind.action_table.check.func(candidates)
 	call s:set_candidates_state(a:candidates, 1)
 endfunction
 
-let s:unite_kind.action_table.uncheck = {
+let s:kind.action_table.uncheck = {
 			\ 	'description': 'mark task as incomplete'
 			\ }
-function! s:unite_kind.action_table.uncheck.func(candidates)
+function! s:kind.action_table.uncheck.func(candidates)
 	call s:set_candidates_state(a:candidates, 0)
 endfunction
 
-let s:unite_kind.action_table.remove = {
+let s:kind.action_table.remove = {
 			\ 	'description': 'remove task',
 			\ 	'is_invalidate_cache': 1,
 			\ 	'is_selectable': 1,
 			\ 	'is_quit': 0
 			\ }
-function! s:unite_kind.action_table.remove.func(candidates)
+function! s:kind.action_table.remove.func(candidates)
 	if type(a:candidates) == type([])
 		let candidates = a:candidates
 	else
@@ -194,24 +194,24 @@ function! s:unite_kind.action_table.remove.func(candidates)
 	endfor
 endfunction
 
-let s:unite_kind.action_table.rename = {
+let s:kind.action_table.rename = {
 			\ 	'description': 'rename task',
 			\ 	'is_invalidate_cache': 1,
 			\ 	'is_quit': 0
 			\ }
-function! s:unite_kind.action_table.rename.func(candidates)
+function! s:kind.action_table.rename.func(candidates)
 	let task = a:candidates.action__task
 	let new_name = input('New name: ', task.title)
 	let task.title = new_name
 	call todo#task#update(task)
 endfunction
 
-let s:unite_kind.action_table.reschedule = {
+let s:kind.action_table.reschedule = {
 			\ 	'description': 'reschedule task',
 			\ 	'is_invalidate_cache': 1,
 			\ 	'is_quit': 0
 			\ }
-function! s:unite_kind.action_table.reschedule.func(candidates)
+function! s:kind.action_table.reschedule.func(candidates)
 	let candidates = (type(a:candidates) == type([])) ? a:candidates : [a:candidates]
 
 	let date_str = ''
@@ -264,17 +264,17 @@ function! todo#unite#all_tasks(args, context)
 endfunction
 
 function! todo#unite#register()
-	call unite#define_kind(s:unite_kind)
+	call unite#define_kind(s:kind)
 
-	call unite#define_filter(s:unite_sorter)
-	call unite#define_filter(s:unite_filter_completed)
-	call unite#define_filter(s:unite_filter_incompleted)
-	call unite#define_filter(s:unite_filter_today)
-	call unite#define_filter(s:unite_filter_separator)
+	call unite#define_filter(s:filter_sort)
+	call unite#define_filter(s:filter_completed)
+	call unite#define_filter(s:filter_incompleted)
+	call unite#define_filter(s:filter_today)
+	call unite#define_filter(s:filter_separate)
 
-	call unite#define_source(s:unite_source_all)
-	call unite#define_source(s:unite_source_default)
-	call unite#define_source(s:unite_source_today)
+	call unite#define_source(s:source_all)
+	call unite#define_source(s:source_default)
+	call unite#define_source(s:source_today)
 endfunction
 " }}}
 
