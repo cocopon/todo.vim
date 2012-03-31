@@ -2,11 +2,6 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
-" Initialize {{{
-call todo#unite#register()
-" }}}
-
-
 " Interface {{{
 function! todo#load()
 	call todo#store#load(1)

@@ -5,3 +5,9 @@
 " Copyright (C) 2012 cocopon
 
 command! -nargs=* TodoAdd call todo#add(<f-args>)
+
+
+" Initialize {{{
+call todo#unite#register()
+" }}}
+
