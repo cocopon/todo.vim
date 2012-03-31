@@ -19,7 +19,7 @@ function! s:separator_candidate(date)
 	let date_str = todo#date#format(a:date)
 	let dummy_task = todo#task#new(a:date, '')
 	return {
-				\ 	'word': date_str,
+				\ 	'word': printf('--- %s ---', date_str),
 				\ 	'source': 'todo',
 				\ 	'is_dummy': 1,
 				\ 	'kind': 'todo',
@@ -83,23 +83,45 @@ function! s:unite_filter_incompleted.filter(candidates, context)
 
 	return result
 endfunction
+
+let s:unite_filter_separator = {
+			\ 	'name': 'todo/separator'
+			\ }
+function! s:unite_filter_separator.filter(candidates, context)
+	let result = []
+
+	let date = todo#date#empty()
+	for candidate in a:candidates
+		let task = candidate.action__task
+
+		if empty(date) || todo#date#compare(date, task.date) != 0
+			let date = task.date
+			let separator = s:separator_candidate(date)
+			call add(result, separator)
+		endif
+
+		call add(result, candidate)
+	endfor
+
+	return result
+endfunction
 " }}}
 
 
 " Source {{{
 let s:unite_source_default = {
 			\ 	'name': 'todo',
-			\ 	'filters': ['incompleted', 'todo/sorter'],
+			\ 	'filters': ['incompleted', 'todo/sorter', 'todo/separator'],
 			\ 	'gather_candidates': function('todo#unite#all_tasks')
 			\ }
 let s:unite_source_all = {
 			\ 	'name': 'todo/all',
-			\ 	'filters': ['todo/sorter'],
+			\ 	'filters': ['todo/sorter', 'todo/separator'],
 			\ 	'gather_candidates': function('todo#unite#all_tasks')
 			\ }
 let s:unite_source_today = {
 			\ 	'name': 'todo/today',
-			\ 	'filters': ['today', 'todo/sorter'],
+			\ 	'filters': ['today', 'todo/sorter', 'todo/separator'],
 			\ 	'gather_candidates': function('todo#unite#all_tasks')
 			\ }
 " }}}
@@ -219,6 +241,7 @@ function! todo#unite#register()
 	call unite#define_filter(s:unite_filter_completed)
 	call unite#define_filter(s:unite_filter_incompleted)
 	call unite#define_filter(s:unite_filter_today)
+	call unite#define_filter(s:unite_filter_separator)
 
 	call unite#define_source(s:unite_source_all)
 	call unite#define_source(s:unite_source_default)

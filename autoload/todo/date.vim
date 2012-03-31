@@ -17,6 +17,10 @@ function! todo#date#new(year, month, day)
 				\ }
 endfunction
 
+function! todo#date#empty()
+	return s:empty_date
+endfunction
+
 function! todo#date#today()
 	let total_sec = localtime()
 	return todo#date#decode(strftime('%Y%m%d'))
