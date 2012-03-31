@@ -3,13 +3,11 @@ function! s:compare_candidate(c1, c2)
 	let task1 = a:c1.action__task
 	let task2 = a:c2.action__task
 
-	if task1.completed != task2.completed
+	let result = todo#date#compare(task1.date, task2.date)
+	if result != 0
+		return result
+	elseif task1.completed != task2.completed
 		return task1.completed ? +1 : -1
-	else
-		let result = todo#date#compare(task1.date, task2.date)
-		if result != 0
-			return result
-		endif
 	endif
 
 	return +1
