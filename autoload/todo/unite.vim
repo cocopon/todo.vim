@@ -109,17 +109,17 @@ endfunction
 " Source {{{
 let s:unite_source_default = {
 			\ 	'name': 'todo',
-			\ 	'filters': ['incompleted', 'todo/sorter', 'todo/separator'],
+			\ 	'filters': ['incompleted', 'todo/sorter', 'matcher_default', 'todo/separator'],
 			\ 	'gather_candidates': function('todo#unite#all_tasks')
 			\ }
 let s:unite_source_all = {
 			\ 	'name': 'todo/all',
-			\ 	'filters': ['todo/sorter', 'todo/separator'],
+			\ 	'filters': ['todo/sorter', 'matcher_default', 'todo/separator'],
 			\ 	'gather_candidates': function('todo#unite#all_tasks')
 			\ }
 let s:unite_source_today = {
 			\ 	'name': 'todo/today',
-			\ 	'filters': ['today', 'todo/sorter', 'todo/separator'],
+			\ 	'filters': ['today', 'todo/sorter', 'matcher_default', 'todo/separator'],
 			\ 	'gather_candidates': function('todo#unite#all_tasks')
 			\ }
 " }}}
