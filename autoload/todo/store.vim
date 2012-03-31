@@ -30,6 +30,15 @@ function! todo#store#reset()
 	call todo#store#save()
 endfunction
 
+function! todo#store#cleanup()
+	let tasks = todo#store#all_tasks()
+	for task in tasks
+		if task.completed
+			call todo#task#remove(task)
+		endif
+	endfor
+endfunction
+
 
 " Tasks {{{
 function! todo#store#tasks(date)
