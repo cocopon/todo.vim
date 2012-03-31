@@ -207,6 +207,37 @@ function! s:unite_kind.action_table.rename.func(candidates)
 	let task.title = new_name
 	call todo#task#update(task)
 endfunction
+
+let s:unite_kind.action_table.reschedule = {
+			\ 	'description': 'reschedule task',
+			\ 	'is_invalidate_cache': 1,
+			\ 	'is_quit': 0
+			\ }
+function! s:unite_kind.action_table.reschedule.func(candidates)
+	let candidates = (type(a:candidates) == type([])) ? a:candidates : [a:candidates]
+
+	let date_str = ''
+	if len(candidates) == 1
+		let task = candidates[0].action__task
+		let date_str = todo#date#format(task.date)
+	endif
+	let date_str = input('New date: ', date_str)
+	let date = todo#date#parse(date_str)
+	if empty(date)
+		" TODO: Show error message
+		return
+	endif
+
+	for candidate in candidates
+		" Remove old task
+		let task = candidate.action__task
+		call todo#task#remove(task)
+
+		" Add rescheduled task
+		let task.date = date
+		call todo#task#add(task)
+	endfor
+endfunction
 " }}}
 
 
