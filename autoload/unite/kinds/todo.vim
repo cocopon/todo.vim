@@ -88,6 +88,10 @@ let s:kind.action_table.rename = {
 function! s:kind.action_table.rename.func(candidates)
 	let task = a:candidates.action__task
 	let new_name = input('New name: ', task.title)
+	if len(new_name) == 0
+		return
+	endif
+
 	let task.title = new_name
 	call todo#task#update(task)
 endfunction
