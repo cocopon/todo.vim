@@ -106,21 +106,40 @@ endfunction
 " }}}
 
 
+let s:hooks = {
+			\ }
+function! s:hooks.on_syntax(args, context)
+	syntax match uniteSource__Separator /--- .\+ ---/ contained containedin=unite__todo
+	syntax match uniteSource__Completed /\[v\] .\+/ contained containedin=unite__todo
+	syntax match uniteSource__Date /[0-9]\{4\}\/[0-9]\{2\}\/[0-9]\{2\}/ contained containedin=unite__todo
+
+	highlight default link uniteSource__Separator Special
+	highlight default link uniteSource__Completed Comment
+	highlight default link uniteSource__Date Type
+endfunction
+
+
 " Source {{{
 let s:source_default = {
 			\ 	'name': 'todo',
 			\ 	'filters': ['matcher_todo/incompleted', 'sorter_todo', 'matcher_default', 'converter_todo/separate'],
-			\ 	'gather_candidates': function('todo#unite#all_tasks')
+			\ 	'gather_candidates': function('todo#unite#all_tasks'),
+			\ 	'hooks': s:hooks,
+			\ 	'syntax': 'unite__todo',
 			\ }
 let s:source_all = {
 			\ 	'name': 'todo/all',
 			\ 	'filters': ['sorter_todo', 'matcher_default', 'converter_todo/separate'],
-			\ 	'gather_candidates': function('todo#unite#all_tasks')
+			\ 	'gather_candidates': function('todo#unite#all_tasks'),
+			\ 	'hooks': s:hooks,
+			\ 	'syntax': 'unite__todo',
 			\ }
 let s:source_today = {
 			\ 	'name': 'todo/today',
 			\ 	'filters': ['matcher_todo/today', 'sorter_todo', 'matcher_default', 'converter_todo/separate'],
-			\ 	'gather_candidates': function('todo#unite#all_tasks')
+			\ 	'gather_candidates': function('todo#unite#all_tasks'),
+			\ 	'hooks': s:hooks,
+			\ 	'syntax': 'unite__todo',
 			\ }
 " }}}
 
