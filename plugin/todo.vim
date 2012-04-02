@@ -6,8 +6,3 @@
 
 command! -nargs=* TodoAdd call todo#add(<f-args>)
 
-
-" Initialize {{{
-call todo#unite#register()
-" }}}
-
