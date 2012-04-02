@@ -35,7 +35,7 @@ endfunction
 
 function! todo#reset()
 	let answer = input('Do you really want to remove all tasks?: ')
-	if answer == 'yes'
+	if answer =~ '^y\(es\)\?$'
 		call todo#store#reset()
 	endif
 endfunction
