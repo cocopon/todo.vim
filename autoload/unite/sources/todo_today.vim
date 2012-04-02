@@ -1,3 +1,13 @@
+" todo.vim - Simple to-do list working with unite.vim
+"
+" Author:  cocopon <cocopon@me.com>
+" License: MIT License
+
+
+let s:save_cpo = &cpo
+set cpo&vim
+
+
 function! unite#sources#todo_today#define()
 	return s:source
 endfunction
@@ -10,3 +20,8 @@ let s:source = {
 			\ 	'syntax': 'unite__todo',
 			\ }
 
+
+let &cpo = s:save_cpo
+
+
+" vim: set foldmethod=marker:

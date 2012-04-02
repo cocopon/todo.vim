@@ -1,3 +1,13 @@
+" todo.vim - Simple to-do list working with unite.vim
+"
+" Author:  cocopon <cocopon@me.com>
+" License: MIT License
+
+
+let s:save_cpo = &cpo
+set cpo&vim
+
+
 function! todo#unite#all_tasks(args, context)
 	if len(a:args) == 0
 		let tasks = todo#store#all_tasks()
@@ -32,6 +42,9 @@ function! todo#unite#hooks.on_syntax(args, context)
 	highlight default link uniteSource__Completed Comment
 	highlight default link uniteSource__Date Type
 endfunction
+
+
+let &cpo = s:save_cpo
 
 
 " vim: set foldmethod=marker:

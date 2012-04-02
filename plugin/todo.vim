@@ -3,5 +3,8 @@
 " Author:  cocopon <cocopon@me.com>
 " License: MIT License
 
+
 command! -nargs=* TodoAdd call todo#add(<f-args>)
 
+
+" vim: set foldmethod=marker:

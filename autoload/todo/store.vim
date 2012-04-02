@@ -1,3 +1,13 @@
+" todo.vim - Simple to-do list working with unite.vim
+"
+" Author:  cocopon <cocopon@me.com>
+" License: MIT License
+
+
+let s:save_cpo = &cpo
+set cpo&vim
+
+
 " TODO: Place data to right path
 let s:data_path = expand('~/todovim-test.txt')
 let s:data_loaded = 0
@@ -75,6 +85,9 @@ function! todo#store#all_tasks()
 	return result
 endfunction
 " }}}
+
+
+let &cpo = s:save_cpo
 
 
  " vim: set foldmethod=marker:

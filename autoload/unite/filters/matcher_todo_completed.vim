@@ -1,3 +1,13 @@
+" todo.vim - Simple to-do list working with unite.vim
+"
+" Author:  cocopon <cocopon@me.com>
+" License: MIT License
+
+
+let s:save_cpo = &cpo
+set cpo&vim
+
+
 function! unite#filters#matcher_todo_completed#define()
 	return s:filter
 endfunction
@@ -18,3 +28,8 @@ function! s:filter.filter(candidates, context)
 	return result
 endfunction
 
+
+let &cpo = s:save_cpo
+
+
+" vim: set foldmethod=marker:

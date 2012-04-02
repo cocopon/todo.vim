@@ -1,3 +1,13 @@
+" todo.vim - Simple to-do list working with unite.vim
+"
+" Author:  cocopon <cocopon@me.com>
+" License: MIT License
+
+
+let s:save_cpo = &cpo
+set cpo&vim
+
+
 let s:empty_date = {}
 
 
@@ -51,6 +61,7 @@ function! todo#date#compare(date1, date2)
 	return 0
 endfunction
 
+
 " Format {{{
 function! s:parse_date_symbol(str)
 	if match(a:str, 'tod\(ay\)\?') >= 0
@@ -99,6 +110,7 @@ function! todo#date#format(date)
 endfunction
 " }}}
 
+
 " Encode/Decode {{{
 function! todo#date#encode(date)
 	return printf('%04d%02d%02d', a:date.year, a:date.month, a:date.day)
@@ -108,6 +120,9 @@ function! todo#date#decode(str)
 	return s:parse_yyyymmdd(a:str)
 endfunction
 " }}}
+
+
+let &cpo = s:save_cpo
 
 
  " vim: set foldmethod=marker:
