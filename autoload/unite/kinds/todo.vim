@@ -61,13 +61,13 @@ function! s:kind.action_table.uncheck.func(candidates)
 	call s:set_candidates_state(a:candidates, 0)
 endfunction
 
-let s:kind.action_table.remove = {
-			\ 	'description': 'remove task',
+let s:kind.action_table.delete = {
+			\ 	'description': 'delete task',
 			\ 	'is_invalidate_cache': 1,
 			\ 	'is_selectable': 1,
 			\ 	'is_quit': 0
 			\ }
-function! s:kind.action_table.remove.func(candidates)
+function! s:kind.action_table.delete.func(candidates)
 	if type(a:candidates) == type([])
 		let candidates = a:candidates
 	else
