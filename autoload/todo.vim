@@ -14,28 +14,23 @@ function! todo#load()
 endfunction
 
 function! todo#add(...)
-	if a:0 == 1
-		" Add new task in today
-		" :Add {title}
-		let task = todo#task#new(todo#date#today(), a:1)
-		call todo#task#add(task)
-	elseif a:0 >= 2
-		" Add new task in specified date
-		" :Add {date} {title}
-		let args = copy(a:000)
-		call remove(args, 0)
-		let title = join(args)
-		let date = todo#date#parse(a:1)
-		let task = todo#task#new(date, title)
-		call todo#task#add(task)
-	else
-		" Add new task step-by-step
-		let date_str = input('Date: ')
-		let date = todo#date#parse(date_str)
+	if a:0 == 0
 		let title = input('Title: ')
-		let task = todo#task#new(date, title)
-		call todo#task#add(task)
+	elseif a:0 == 1
+		let title = a:1
 	endif
+	if len(title) == 0
+		return
+	endif
+
+	let date_str = input('Date: ', 'today')
+	let date = todo#date#parse(date_str)
+	if empty(date)
+		return
+	endif
+
+	let task = todo#task#new(date, title)
+	call todo#task#add(task)
 endfunction
 
 function! todo#reset()

@@ -4,7 +4,7 @@
 " License: MIT License
 
 
-command! -nargs=* TodoAdd call todo#add(<f-args>)
+command! -nargs=? TodoAdd call todo#add(<f-args>)
 
 
 " vim: set foldmethod=marker:
