@@ -63,15 +63,15 @@ endfunction
 
 
 " Format {{{
-let s:date_special_names = {
+let s:special_patterns = {
 			\ 	'tod\(ay\)\?': [0, 0, 0],
 			\ 	'tom\(orrow\)\?': [0, 0, 1],
 			\ }
 function! s:parse_special_name(str)
-	for pattern in keys(s:date_special_names)
+	for pattern in keys(s:special_patterns)
 		if match(a:str, pattern) >= 0
 			let today = todo#date#today()
-			let offset = s:date_special_names[pattern]
+			let offset = s:special_patterns[pattern]
 			return todo#date#offset(today, offset[0], offset[1], offset[2])
 		endif
 	endfor
@@ -94,9 +94,41 @@ function! s:parse_yyyymmdd(str)
 	return s:empty_date
 endfunction
 
+let s:weekday_patterns = {
+			\ 	'sat\(\urday\)\?': 0,
+			\ 	'sun\(day\)\?': 1,
+			\ 	'mon\(day\)\?': 2,
+			\ 	'tue\(sday\)\?': 3,
+			\ 	'wed\(nesday\)\?': 4,
+			\ 	'thu\(rsday\)\?': 5,
+			\ 	'fri\(day\)\?': 6,
+			\ }
+function! s:parse_weekday(str)
+	let target_weekday = -1
+	for pattern in keys(s:weekday_patterns)
+		if match(a:str, pattern) >= 0
+			let target_weekday = s:weekday_patterns[pattern]
+			break
+		endif
+	endfor
+	if target_weekday < 0
+		return todo#date#empty()
+	endif
+
+	let today = todo#date#today()
+	let weekday = todo#date#weekday(today)
+	let offset = target_weekday - weekday
+	if offset < 0
+		let offset += 7
+	endif
+
+	return todo#date#offset(today, 0, 0, offset)
+endfunction
+
 let s:date_parsers = [
-			\   function('s:parse_special_name'),
-			\   function('s:parse_yyyymmdd')
+			\ 	function('s:parse_special_name'),
+			\ 	function('s:parse_yyyymmdd'),
+			\ 	function('s:parse_weekday'),
 			\ ]
 
 function! todo#date#parse(str)
@@ -201,6 +233,23 @@ function! s:normalize_month(date)
 	endwhile
 
 	return date
+endfunction
+" }}}
+
+
+" Weekday {{{
+function! todo#date#weekday(date)
+	let year = a:date.year
+	let m = a:date.month
+	if m < 3
+		let m += 12
+		let year -= 1
+	endif
+	let y1 = year / 100
+	let y2 = year % 100
+	let d = a:date.day
+
+	return (d + ((m + 1) * 26 / 10) + y2 + (y2 / 4) + (y1 / 4) + 5 * y1) % 7
 endfunction
 " }}}
 
