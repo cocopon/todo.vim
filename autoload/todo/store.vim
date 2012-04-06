@@ -8,26 +8,25 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
-" TODO: Place data to right path
-let s:data_path = expand('~/todovim-test.txt')
 let s:data_loaded = 0
 let s:data = {}
+
 
 " Load/Save {{{
 function! todo#store#save()
 	let data_string = string(s:data)
 	let data_list = split(data_string, "\<NL>")
-	call writefile(data_list, expand(s:data_path))
+	call writefile(data_list, expand(g:todo_data_path))
 endfunction
 
 function! todo#store#load(force_reload)
 	if s:data_loaded && !a:force_reload
 		return
-	elseif !filereadable(s:data_path)
+	elseif !filereadable(g:todo_data_path)
 		return
 	endif
 
-	let data_list = readfile(s:data_path)
+	let data_list = readfile(g:todo_data_path)
 	let data_string = join(data_list, "\<NL>")
 	let s:data = eval(data_string)
 	let s:data_loaded = 1
