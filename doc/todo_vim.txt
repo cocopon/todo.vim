@@ -10,18 +10,17 @@ License:    MIT License
 CONTENTS                                                     *todo_vim-contents*
 
 
-Introduction           |todo_vim-introduction|
-
-QuickStart             |todo_vim-quickstart|
-  1. Add new task              |todo_vim-add-task|
-  2. Browse tasks              |todo_vim-browse-tasks|
-  3. Mark task as completed    |todo_vim-complete|
-  3. Delete task               |todo_vim-delete-task|
-  4. Rename task               |todo_vim-rename-task| 
-  5. Reschedule task           |todo_vim-reschedule-task|
-  6. Cleanup tasks             |todo_vim-cleanup-tasks|
-Customize              |todo_vim-customize|
-  1. Data file location        |todo_vim-data-location|
+Introduction                   |todo_vim-introduction|
+QuickStart                     |todo_vim-quickstart|
+  1. Add new task                |todo_vim-add-task|
+  2. Browse tasks                |todo_vim-browse-tasks|
+  3. Mark task as completed      |todo_vim-complete|
+  3. Delete task                 |todo_vim-delete-task|
+  4. Rename task                 |todo_vim-rename-task| 
+  5. Reschedule task             |todo_vim-reschedule-task|
+  6. Cleanup tasks               |todo_vim-cleanup-tasks|
+Customize                      |todo_vim-customize|
+  1. Data file location          |todo_vim-data-location|
 
 
 ==============================================================================
@@ -54,7 +53,7 @@ You can use various date format as below.
 
 2. Browse tasks                                          *todo_vim-browse-tasks*
 
-This plugin requires unite.vim to browse tasks.
+This plugin requires |unite.vim| to browse tasks.
 If you haven't install |unite.vim| yet, please install it before using this
 plugin.
 
@@ -93,4 +92,4 @@ To change a data file location, add below in your vimrc.
 <
 
 ==============================================================================
-vim: set tw=78 ft=help:
+vim: set tw=78 ft=help norl:
