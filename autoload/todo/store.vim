@@ -20,13 +20,14 @@ function! todo#store#save()
 endfunction
 
 function! todo#store#load(force_reload)
+	let path = expand(g:todo_data_path)
 	if s:data_loaded && !a:force_reload
 		return
-	elseif !filereadable(g:todo_data_path)
+	elseif !filereadable(path)
 		return
 	endif
 
-	let data_list = readfile(g:todo_data_path)
+	let data_list = readfile(path)
 	let data_string = join(data_list, "\<NL>")
 	let s:data = eval(data_string)
 	let s:data_loaded = 1
