@@ -35,6 +35,7 @@ let todo#unite#hooks = {
 			\ }
 function! todo#unite#hooks.on_syntax(args, context)
 	syntax match uniteSource__Separator /--- .\+ ---/ contained containedin=unite__todo
+	syntax match uniteSource__Separator /=== .\+ ===/ contained containedin=unite__todo
 	syntax match uniteSource__Completed /\[v\] .\+/ contained containedin=unite__todo
 	syntax match uniteSource__Date /[0-9]\{4\}\/[0-9]\{2\}\/[0-9]\{2\}/ contained containedin=unite__todo
 

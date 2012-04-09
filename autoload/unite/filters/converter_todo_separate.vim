@@ -35,7 +35,9 @@ function! s:filter.filter(candidates, context)
 endfunction
 
 function! s:separator_candidate(date)
-	let word = todo#date#format('--- %y/%m/%d (%a) ---', a:date)
+	let word = (todo#date#compare(a:date, todo#date#today()) == 0)
+				\ ? todo#date#format('=== %y/%m/%d (%a) ===', a:date) 
+				\ : todo#date#format('--- %y/%m/%d (%a) ---', a:date) 
 	let dummy_task = todo#task#new(a:date, '')
 	return {
 				\ 	'word': word,
