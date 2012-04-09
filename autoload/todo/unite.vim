@@ -18,7 +18,7 @@ function! todo#unite#all_tasks(args, context)
 	let candidates = []
 
 	for task in tasks
-		let date_str = todo#date#format(task.date)
+		let date_str = todo#date#format('%y/%m/%d', task.date)
 		let candidate = {
 					\ 	'word': printf('[%s] %s %s', (task.completed ? 'v' : '-'), date_str, task.title),
 					\ 	'source': 'todo',

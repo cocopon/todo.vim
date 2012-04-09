@@ -107,7 +107,7 @@ function! s:kind.action_table.reschedule.func(candidates)
 	let date_str = ''
 	if len(candidates) == 1
 		let task = candidates[0].action__task
-		let date_str = todo#date#format(task.date)
+		let date_str = todo#date#format('%y%m/%d', task.date)
 	endif
 	let date_str = input('New date: ', date_str)
 	let date = todo#date#parse(date_str)

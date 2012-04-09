@@ -35,10 +35,10 @@ function! s:filter.filter(candidates, context)
 endfunction
 
 function! s:separator_candidate(date)
-	let date_str = todo#date#format(a:date)
+	let word = todo#date#format('--- %y/%m/%d (%a) ---', a:date)
 	let dummy_task = todo#task#new(a:date, '')
 	return {
-				\ 	'word': printf('--- %s ---', date_str),
+				\ 	'word': word,
 				\ 	'source': 'todo',
 				\ 	'is_dummy': 1,
 				\ 	'kind': 'todo',

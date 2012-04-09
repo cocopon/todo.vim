@@ -142,12 +142,23 @@ function! todo#date#parse(str)
 	return s:empty_date
 endfunction
 
-" TODO: Add format argument
-function! todo#date#format(date)
-	return printf('%04d/%02d/%02d',
-				\ a:date.year,
-				\ a:date.month,
-				\ a:date.day)
+" TODO: Localize
+let s:weekday_str = [
+			\ 	'Sat',
+			\ 	'Sun',
+			\ 	'Mon',
+			\ 	'Tue',
+			\ 	'Wed',
+			\ 	'Thu',
+			\ 	'Fri',
+			\ ]
+function! todo#date#format(format, date)
+	let result = substitute(a:format, '%y', printf('%04d', a:date.year), 'g')
+	let result = substitute(result, '%m', printf('%02d', a:date.month), 'g')
+	let result = substitute(result, '%d', printf('%02d', a:date.day), 'g')
+	let weekday_str = s:weekday_str[todo#date#weekday(a:date)]
+	let result = substitute(result, '%a', weekday_str, 'g')
+	return result
 endfunction
 " }}}
 
