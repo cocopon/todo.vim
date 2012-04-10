@@ -14,6 +14,7 @@ endfunction
 
 let s:source = {
 			\ 	'name': 'todo/today',
+			\ 	'description': 'candidates from today''s todo',
 			\ 	'filters': ['matcher_todo/today', 'sorter_todo', 'matcher_default', 'converter_todo/separate'],
 			\ 	'gather_candidates': function('todo#unite#all_tasks'),
 			\ 	'hooks': todo#unite#hooks,
