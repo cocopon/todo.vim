@@ -34,10 +34,17 @@ function! s:filter.filter(candidates, context)
 	return result
 endfunction
 
+
+" Candidates {{{
 function! s:separator_candidate(date)
-	let word = (todo#date#compare(a:date, todo#date#today()) == 0)
-				\ ? todo#date#format('=== %y/%m/%d (%a) ===', a:date) 
-				\ : todo#date#format('--- %y/%m/%d (%a) ---', a:date) 
+	if todo#date#istbd(a:date)
+		let word = '--- TBD ---'
+	elseif todo#date#compare(a:date, todo#date#today()) == 0
+		let word = todo#date#format('=== %y/%m/%d (%a) ===', a:date) 
+	else
+		let word = todo#date#format('--- %y/%m/%d (%a) ---', a:date) 
+	endif
+
 	let dummy_task = todo#task#new(a:date, '')
 	return {
 				\ 	'word': word,
@@ -47,6 +54,7 @@ function! s:separator_candidate(date)
 				\ 	'action__task': dummy_task,
 				\ }
 endfunction
+" }}}
 
 
 let &cpo = s:save_cpo

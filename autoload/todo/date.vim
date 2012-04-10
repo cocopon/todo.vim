@@ -8,9 +8,6 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
-let s:empty_date = {}
-
-
 " Create {{{
 ""
 " Creates and returns a new date
@@ -23,21 +20,28 @@ function! todo#date#new(year, month, day)
 	return {
 				\   'year': a:year,
 				\   'month': a:month,
-				\   'day': a:day
+				\   'day': a:day,
 				\ }
 endfunction
 
 function! todo#date#empty()
-	return s:empty_date
+	return {}
 endfunction
 
 function! todo#date#today()
 	let total_sec = localtime()
 	return todo#date#decode(strftime('%Y%m%d'))
 endfunction
+
+function! todo#date#tbd()
+	let date = todo#date#new(9999, 99, 99)
+	let date.tbd = 1
+	return date
+endfunction
 " }}}
 
 
+" Compare {{{
 ""
 " Returns comparison result between two dates
 " @param date1
@@ -47,6 +51,14 @@ endfunction
 " Negative value if date1 is less than date1.
 " Zero if date1 equals to date2.
 function! todo#date#compare(date1, date2)
+	let tbd1 = todo#date#istbd(a:date1)
+	let tbd2 = todo#date#istbd(a:date2)
+	if tbd1 && !tbd2
+		return +1
+	elseif !tbd1 && tbd2
+		return -1
+	endif
+
 	let keys = ['year', 'month', 'day']
 
 	for key in keys
@@ -60,6 +72,12 @@ function! todo#date#compare(date1, date2)
 
 	return 0
 endfunction
+
+function! todo#date#istbd(date)
+	let result = get(a:date, 'tbd', 0) != 0
+	return get(a:date, 'tbd', 0) != 0
+endfunction
+" }}}
 
 
 " Format {{{
@@ -76,7 +94,7 @@ function! s:parse_special_name(str)
 		endif
 	endfor
 
-	return s:empty_date
+	return todo#date#empty()
 endfunction
 
 let s:date_separators = ['', '/', '-']
@@ -91,7 +109,7 @@ function! s:parse_yyyymmdd(str)
 		endif
 	endfor
 
-	return s:empty_date
+	return todo#date#empty()
 endfunction
 
 let s:weekday_patterns = {
@@ -125,10 +143,15 @@ function! s:parse_weekday(str)
 	return todo#date#offset(today, 0, 0, offset)
 endfunction
 
+function! s:parse_tbd(str)
+	return (tolower(a:str) == 'tbd') ? todo#date#tbd() : todo#date#empty()
+endfunction
+
 let s:date_parsers = [
 			\ 	function('s:parse_special_name'),
 			\ 	function('s:parse_yyyymmdd'),
 			\ 	function('s:parse_weekday'),
+			\ 	function('s:parse_tbd'),
 			\ ]
 
 function! todo#date#parse(str)
@@ -139,7 +162,7 @@ function! todo#date#parse(str)
 		endif
 	endfor
 
-	return s:empty_date
+	return todo#date#empty()
 endfunction
 
 " TODO: Localize
@@ -153,6 +176,10 @@ let s:weekday_str = [
 			\ 	'Fri',
 			\ ]
 function! todo#date#format(format, date)
+	if todo#date#istbd(a:date)
+		return 'TBD'
+	endif
+
 	let result = substitute(a:format, '%y', printf('%04d', a:date.year), 'g')
 	let result = substitute(result, '%m', printf('%02d', a:date.month), 'g')
 	let result = substitute(result, '%d', printf('%02d', a:date.day), 'g')
@@ -165,11 +192,19 @@ endfunction
 
 " Encode/Decode {{{
 function! todo#date#encode(date)
-	return printf('%04d%02d%02d', a:date.year, a:date.month, a:date.day)
+	if todo#date#istbd(a:date)
+		return 'tbd'
+	else
+		return printf('%04d%02d%02d', a:date.year, a:date.month, a:date.day)
+	endif
 endfunction
 
 function! todo#date#decode(str)
-	return s:parse_yyyymmdd(a:str)
+	if tolower(a:str) == 'tbd'
+		return todo#date#tbd()
+	else
+		return s:parse_yyyymmdd(a:str)
+	endif
 endfunction
 " }}}
 
