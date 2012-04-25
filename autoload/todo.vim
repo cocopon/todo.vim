@@ -34,12 +34,14 @@ function! todo#add(...)
 		endif
 
 		let date = todo#date#parse(date_str)
-		if empty(date)
-			let msg = printf('Invalid date format ''%s''. ', date_str)
-			redraw
-			call todo#view#echoerr(msg)
-			call getchar()
+		if !empty(date)
+			break
 		endif
+
+		let msg = printf('Invalid date format ''%s''. ', date_str)
+		redraw
+		call todo#view#echoerr(msg)
+		call getchar()
 	endwhile
 
 	let task = todo#task#new(date, title)
