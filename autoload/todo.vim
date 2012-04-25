@@ -46,6 +46,13 @@ function! todo#add(...)
 
 	let task = todo#task#new(date, title)
 	call todo#task#add(task)
+
+	let date_str = todo#date#format('%y/%m/%d', task.date)
+	let msg = printf('Added ''%s'', %s.',
+				\ 	task.title,
+				\ 	date_str)
+	redraw
+	echo msg
 endfunction
 
 function! todo#reset()
