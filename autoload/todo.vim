@@ -20,14 +20,27 @@ function! todo#add(...)
 		let title = a:1
 	endif
 	if len(title) == 0
+		redraw
+		echo 'Cancelled.'
 		return
 	endif
 
-	let date_str = input('Date: ', 'today')
-	let date = todo#date#parse(date_str)
-	if empty(date)
-		return
-	endif
+	while 1
+		let date_str = input('Date: ', 'today')
+		if len(date_str) == 0
+			redraw
+			echo 'Cancelled.'
+			return
+		endif
+
+		let date = todo#date#parse(date_str)
+		if empty(date)
+			let msg = printf('Invalid date format ''%s''. ', date_str)
+			redraw
+			call todo#view#echoerr(msg)
+			call getchar()
+		endif
+	endwhile
 
 	let task = todo#task#new(date, title)
 	call todo#task#add(task)
