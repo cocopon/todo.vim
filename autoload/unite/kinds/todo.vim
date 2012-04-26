@@ -69,7 +69,7 @@ let s:kind.action_table.delete = {
 			\ }
 function! s:kind.action_table.delete.func(candidates)
 	if type(a:candidates) == type([])
-		let candidates = a:candidates
+		let candidates = sort(a:candidates, function('s:compare_candidate_index_desc'))
 	else
 		let candidates = [a:candidates]
 	endif
@@ -102,7 +102,11 @@ let s:kind.action_table.reschedule = {
 			\ 	'is_quit': 0
 			\ }
 function! s:kind.action_table.reschedule.func(candidates)
-	let candidates = (type(a:candidates) == type([])) ? a:candidates : [a:candidates]
+	if type(a:candidates) == type([])
+		let candidates = sort(a:candidates, function('s:compare_candidate_index_desc'))
+	else
+		let candidates = [a:candidates]
+	endif
 
 	let date_str = ''
 	if len(candidates) == 1
@@ -116,15 +120,31 @@ function! s:kind.action_table.reschedule.func(candidates)
 		return
 	endif
 
+	" Remove old task
 	for candidate in candidates
-		" Remove old task
 		let task = candidate.action__task
 		call todo#task#remove(task)
+	endfor
 
-		" Add rescheduled task
+	let candidates = sort(candidates, function('s:compare_candidate_index_asc')
+
+	" Add rescheduled task
+	for candidate in candidates
+		let task = candidate.action__task
 		let task.date = date
 		call todo#task#add(task)
 	endfor
+endfunction
+
+function! s:compare_candidate_index_asc(c1, c2)
+	let task1 = a:c1.action__task
+	let task2 = a:c2.action__task
+
+	return (task1.index >= task2.index) ? +1 : -1
+endfunction
+
+function! s:compare_candidate_index_desc(c1, c2)
+	return s:compare_candidate_index_asc(a:c2, a:c1)
 endfunction
 
 
