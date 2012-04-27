@@ -19,6 +19,8 @@ let s:kind = {
 			\ 	'parents': []
 			\ }
 
+
+" Toggle {{{
 let s:kind.action_table.toggle = {
 			\ 	'description': 'toggle completion',
 			\ 	'is_invalidate_cache': 1,
@@ -29,21 +31,10 @@ function! s:kind.action_table.toggle.func(candidates)
 	let task.completed = task.completed ? 0 : 1
 	call todo#task#update(task)
 endfunction
+" }}}
 
-function! s:set_candidates_state(candidates, state)
-	if type(a:candidates) == type([])
-		let candidates = a:candidates
-	else
-		let candidates = [a:candidates]
-	endif
 
-	for candidate in candidates
-		let task = candidate.action__task
-		let task.completed = a:state
-		call todo#task#update(task)
-	endfor
-endfunction
-
+" Check {{{
 let s:kind.action_table.check = {
 			\ 	'description': 'mark task as complete',
 			\ 	'is_invalidate_cache': 1,
@@ -53,14 +44,20 @@ let s:kind.action_table.check = {
 function! s:kind.action_table.check.func(candidates)
 	call s:set_candidates_state(a:candidates, 1)
 endfunction
+" }}}
 
+
+" Uncheck {{{
 let s:kind.action_table.uncheck = {
 			\ 	'description': 'mark task as incomplete'
 			\ }
 function! s:kind.action_table.uncheck.func(candidates)
 	call s:set_candidates_state(a:candidates, 0)
 endfunction
+" }}}
 
+
+" Delete {{{
 let s:kind.action_table.delete = {
 			\ 	'description': 'delete task',
 			\ 	'is_invalidate_cache': 1,
@@ -79,7 +76,10 @@ function! s:kind.action_table.delete.func(candidates)
 		call todo#task#remove(task)
 	endfor
 endfunction
+" }}}
 
+
+" Rename {{{
 let s:kind.action_table.rename = {
 			\ 	'description': 'rename task',
 			\ 	'is_invalidate_cache': 1,
@@ -95,7 +95,10 @@ function! s:kind.action_table.rename.func(candidates)
 	let task.title = new_name
 	call todo#task#update(task)
 endfunction
+" }}}
 
+
+" Reschedule {{{
 let s:kind.action_table.reschedule = {
 			\ 	'description': 'reschedule task',
 			\ 	'is_invalidate_cache': 1,
@@ -133,6 +136,22 @@ function! s:kind.action_table.reschedule.func(candidates)
 		let task = candidate.action__task
 		let task.date = date
 		call todo#task#add(task)
+	endfor
+endfunction
+" }}}
+
+
+function! s:set_candidates_state(candidates, state)
+	if type(a:candidates) == type([])
+		let candidates = a:candidates
+	else
+		let candidates = [a:candidates]
+	endif
+
+	for candidate in candidates
+		let task = candidate.action__task
+		let task.completed = a:state
+		call todo#task#update(task)
 	endfor
 endfunction
 
