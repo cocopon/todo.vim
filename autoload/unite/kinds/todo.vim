@@ -129,7 +129,7 @@ function! s:kind.action_table.reschedule.func(candidates)
 		call todo#task#remove(task)
 	endfor
 
-	let candidates = sort(candidates, function('s:compare_candidate_index_asc')
+	let candidates = sort(candidates, function('s:compare_candidate_index_asc'))
 
 	" Add rescheduled task
 	for candidate in candidates
