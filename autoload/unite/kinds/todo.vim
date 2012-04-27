@@ -102,6 +102,7 @@ endfunction
 let s:kind.action_table.reschedule = {
 			\ 	'description': 'reschedule task',
 			\ 	'is_invalidate_cache': 1,
+			\ 	'is_selectable': 1,
 			\ 	'is_quit': 0
 			\ }
 function! s:kind.action_table.reschedule.func(candidates)
