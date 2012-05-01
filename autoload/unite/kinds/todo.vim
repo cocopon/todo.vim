@@ -29,7 +29,7 @@ let s:kind.action_table.toggle = {
 function! s:kind.action_table.toggle.func(candidates)
 	let task = a:candidates.action__task
 	let task.completed = task.completed ? 0 : 1
-	call todo#task#update(task)
+	call todo#store#update_task(task)
 endfunction
 " }}}
 
@@ -66,14 +66,14 @@ let s:kind.action_table.delete = {
 			\ }
 function! s:kind.action_table.delete.func(candidates)
 	if type(a:candidates) == type([])
-		let candidates = sort(a:candidates, function('s:compare_candidate_index_desc'))
+		let candidates = sort(a:candidates, function('s:compare_candidate_id_desc'))
 	else
 		let candidates = [a:candidates]
 	endif
 
 	for candidate in candidates
 		let task = candidate.action__task
-		call todo#task#remove(task)
+		call todo#store#remove_task(task)
 	endfor
 endfunction
 " }}}
@@ -93,7 +93,7 @@ function! s:kind.action_table.rename.func(candidates)
 	endif
 
 	let task.title = new_name
-	call todo#task#update(task)
+	call todo#store#update_task(task)
 endfunction
 " }}}
 
@@ -107,7 +107,7 @@ let s:kind.action_table.reschedule = {
 			\ }
 function! s:kind.action_table.reschedule.func(candidates)
 	if type(a:candidates) == type([])
-		let candidates = sort(a:candidates, function('s:compare_candidate_index_desc'))
+		let candidates = sort(a:candidates, function('s:compare_candidate_id_desc'))
 	else
 		let candidates = [a:candidates]
 	endif
@@ -127,16 +127,16 @@ function! s:kind.action_table.reschedule.func(candidates)
 	" Remove old task
 	for candidate in candidates
 		let task = candidate.action__task
-		call todo#task#remove(task)
+		call todo#store#remove_task(task)
 	endfor
 
-	let candidates = sort(candidates, function('s:compare_candidate_index_asc'))
+	let candidates = sort(candidates, function('s:compare_candidate_id_asc'))
 
 	" Add rescheduled task
 	for candidate in candidates
 		let task = candidate.action__task
 		let task.date = date
-		call todo#task#add(task)
+		call todo#store#add_task(task)
 	endfor
 endfunction
 " }}}
@@ -152,19 +152,19 @@ function! s:set_candidates_state(candidates, state)
 	for candidate in candidates
 		let task = candidate.action__task
 		let task.completed = a:state
-		call todo#task#update(task)
+		call todo#store#update_task(task)
 	endfor
 endfunction
 
-function! s:compare_candidate_index_asc(c1, c2)
+function! s:compare_candidate_id_asc(c1, c2)
 	let task1 = a:c1.action__task
 	let task2 = a:c2.action__task
 
-	return (task1.index >= task2.index) ? +1 : -1
+	return (task1.id >= task2.id) ? +1 : -1
 endfunction
 
-function! s:compare_candidate_index_desc(c1, c2)
-	return s:compare_candidate_index_asc(a:c2, a:c1)
+function! s:compare_candidate_id_desc(c1, c2)
+	return s:compare_candidate_id_asc(a:c2, a:c1)
 endfunction
 
 

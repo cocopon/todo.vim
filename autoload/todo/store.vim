@@ -34,6 +34,7 @@ endfunction
 function! todo#store#reset()
 	let s:data = {}
 	let s:data.tasks = {}
+	let s:data.next_id = 0
 	call todo#store#save()
 endfunction
 
@@ -41,7 +42,7 @@ function! todo#store#cleanup()
 	let tasks = todo#store#all_tasks()
 	for task in tasks
 		if task.completed
-			call todo#task#remove(task)
+			call todo#store#remove_task(task)
 		endif
 	endfor
 endfunction
@@ -49,9 +50,7 @@ endfunction
 
 " Tasks {{{
 function! todo#store#tasks(date)
-	if !s:data_loaded
-		call todo#store#load(0)
-	endif
+	call todo#store#load(0)
 
 	if empty(a:date)
 		" TODO: Throw appropriate exception
@@ -69,9 +68,7 @@ function! todo#store#tasks(date)
 endfunction
 
 function! todo#store#all_tasks()
-	if !s:data_loaded
-		call todo#store#load(0)
-	endif
+	call todo#store#load(0)
 
 	let result = []
 
@@ -80,6 +77,78 @@ function! todo#store#all_tasks()
 	endfor
 
 	return result
+endfunction
+
+function! todo#store#add_task(task)
+	let a:task.id = s:data.next_id
+	let s:data.next_id += 1
+	call todo#store#gc(0)
+
+	let tasks = todo#store#tasks(a:task.date)
+	call add(tasks, a:task)
+	call todo#store#save()
+endfunction
+
+function! todo#store#remove_task(task)
+	let tasks = todo#store#tasks(a:task.date)
+	let removed = 0
+
+	let i = 0
+	for task in tasks
+		if task.id == a:task.id
+			call remove(tasks, i)
+			let removed = 1
+			break
+		endif
+		let i += 1
+	endfor
+
+	call todo#store#save()
+	return removed
+endfunction
+
+function! todo#store#update_task(task)
+	let tasks = todo#store#tasks(a:task.date)
+	let found = 0
+
+	let i = 0
+	for task in tasks
+		if task.id == a:task.id
+			let found = 1
+			break
+		endif
+		let i += 1
+	endfor
+
+	if found
+		let a:task.id = task.id
+		let task.id = -1
+		let tasks[i] = a:task
+
+		call todo#store#save()
+	endif
+
+	return found
+endfunction
+
+function! todo#store#gc(forced)
+	if s:data.next_id < 0x7fffffff && !a:forced
+		return
+	endif
+
+	let tasks = todo#store#all_tasks()
+	if len(tasks) == 0x7fffffff
+		throw 'TaskLimitExceeded'
+	endif
+
+	" Compact tasks' id and recalculate the next id
+	let s:data.next_id = 0
+	for task in tasks
+		let task.id = s:data.next_id
+		let s:data.next_id += 1
+	endfor
+
+	call todo#store#save()
 endfunction
 " }}}
 
