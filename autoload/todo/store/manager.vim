@@ -30,4 +30,4 @@ endfunction
 let &cpo = s:save_cpo
 
 
- " vim: set foldmethod=marker:
+" vim: set foldmethod=marker:
