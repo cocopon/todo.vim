@@ -14,22 +14,23 @@ function! todo#store#default#new(path)
 	let store.data_loaded = 0
 
 	let method_names = [
-				\ 	'save',
-				\ 	'load',
-				\ 	'reset',
-				\ 	'cleanup',
-				\ 	'tasks',
-				\ 	'all_tasks',
 				\ 	'add_task',
-				\ 	'remove_task',
-				\ 	'update_task',
+				\ 	'all_tasks',
+				\ 	'cleanup',
 				\ 	'gc',
+				\ 	'load',
+				\ 	'remove_task',
+				\ 	'reset',
+				\ 	'save',
+				\ 	'setup',
+				\ 	'tasks',
+				\ 	'update_task',
 				\ ]
 	for method_name in method_names
 		let store[method_name] = function('todo#store#default#store_' . method_name)
 	endfor
 
-	call store.reset()
+	call store.setup()
 
 	return store
 endfunction
@@ -59,10 +60,16 @@ endfunction
 " }}}
 
 
-function! todo#store#default#store_reset() dict
+function! todo#store#default#store_setup() dict
 	let self.data = {}
 	let self.data.tasks = {}
 	let self.data.next_id = 0
+endfunction
+
+
+function! todo#store#default#store_reset() dict
+	call self.setup()
+	call self.save()
 endfunction
 
 
