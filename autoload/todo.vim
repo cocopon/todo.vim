@@ -10,7 +10,8 @@ set cpo&vim
 
 " Interface {{{
 function! todo#load()
-	call todo#store#load(1)
+	let store = todo#store#manager#get()
+	call store.load(1)
 endfunction
 
 function! todo#add(...)
@@ -45,7 +46,8 @@ function! todo#add(...)
 	endwhile
 
 	let task = todo#task#new(date, title)
-	call todo#store#add_task(task)
+	let store = todo#store#manager#get()
+	call store.add_task(task)
 
 	let date_str = todo#date#format('%y/%m/%d', task.date)
 	let msg = printf('Added ''%s'', %s.',
@@ -58,7 +60,8 @@ endfunction
 function! todo#reset()
 	let answer = input('Do you really want to remove all tasks?: ')
 	if answer =~ '^y\(es\)\?$'
-		call todo#store#reset()
+		let store = todo#store#manager#get()
+		let store.reset()
 	endif
 endfunction
 " }}}

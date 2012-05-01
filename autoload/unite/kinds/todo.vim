@@ -29,7 +29,8 @@ let s:kind.action_table.toggle = {
 function! s:kind.action_table.toggle.func(candidates)
 	let task = a:candidates.action__task
 	let task.completed = task.completed ? 0 : 1
-	call todo#store#update_task(task)
+	let store = todo#store#manager#get()
+	call store.update_task(task)
 endfunction
 " }}}
 
@@ -71,9 +72,10 @@ function! s:kind.action_table.delete.func(candidates)
 		let candidates = [a:candidates]
 	endif
 
+	let store = todo#store#manager#get()
 	for candidate in candidates
 		let task = candidate.action__task
-		call todo#store#remove_task(task)
+		call store.remove_task(task)
 	endfor
 endfunction
 " }}}
@@ -93,7 +95,8 @@ function! s:kind.action_table.rename.func(candidates)
 	endif
 
 	let task.title = new_name
-	call todo#store#update_task(task)
+	let store = todo#store#manager#get()
+	call store.update_task(task)
 endfunction
 " }}}
 
@@ -125,9 +128,10 @@ function! s:kind.action_table.reschedule.func(candidates)
 	endif
 
 	" Remove old task
+	let store = todo#store#manager#get()
 	for candidate in candidates
 		let task = candidate.action__task
-		call todo#store#remove_task(task)
+		call store.remove_task(task)
 	endfor
 
 	let candidates = sort(candidates, function('s:compare_candidate_id_asc'))
@@ -136,7 +140,7 @@ function! s:kind.action_table.reschedule.func(candidates)
 	for candidate in candidates
 		let task = candidate.action__task
 		let task.date = date
-		call todo#store#add_task(task)
+		call store.add_task(task)
 	endfor
 endfunction
 " }}}
@@ -149,10 +153,11 @@ function! s:set_candidates_state(candidates, state)
 		let candidates = [a:candidates]
 	endif
 
+	let store = todo#store#manager#get()
 	for candidate in candidates
 		let task = candidate.action__task
 		let task.completed = a:state
-		call todo#store#update_task(task)
+		call store.update_task(task)
 	endfor
 endfunction
 

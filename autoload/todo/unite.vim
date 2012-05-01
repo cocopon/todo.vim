@@ -9,11 +9,13 @@ set cpo&vim
 
 
 function! todo#unite#all_tasks(args, context)
+	let store = todo#store#manager#get()
+
 	if len(a:args) == 0
-		let tasks = todo#store#all_tasks()
+		let tasks = store.all_tasks()
 	else
 		let date = todo#date#parse(a:args[0])
-		let tasks = todo#store#tasks(date)
+		let tasks = store.tasks(date)
 	endif
 	let candidates = []
 
