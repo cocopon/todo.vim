@@ -8,10 +8,6 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
-let s:data_loaded = 0
-let s:data = {}
-
-
 " Load/Save {{{
 function! todo#store#save()
 	let data_string = string(s:data)
@@ -37,6 +33,7 @@ endfunction
 
 function! todo#store#reset()
 	let s:data = {}
+	let s:data.tasks = {}
 	call todo#store#save()
 endfunction
 
@@ -62,10 +59,10 @@ function! todo#store#tasks(date)
 	endif
 
 	let date_str = todo#date#encode(a:date)
-	let tasks = get(s:data, date_str, [])
+	let tasks = get(s:data.tasks, date_str, [])
 
 	if len(tasks) == 0
-		let s:data[date_str] = tasks
+		let s:data.tasks[date_str] = tasks
 	endif
 
 	return tasks
@@ -78,12 +75,18 @@ function! todo#store#all_tasks()
 
 	let result = []
 
-	for tasks in values(s:data)
+	for tasks in values(s:data.tasks)
 		call extend(result, tasks)
 	endfor
 
 	return result
 endfunction
+" }}}
+
+
+" Initialize {{{
+let s:data_loaded = 0
+call todo#store#reset()
 " }}}
 
 
