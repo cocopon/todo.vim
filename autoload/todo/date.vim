@@ -80,7 +80,7 @@ endfunction
 " }}}
 
 
-" Format {{{
+" Parse {{{
 let s:special_patterns = {
 			\ 	'tod\(ay\)\?': [0, 0, 0],
 			\ 	'tom\(orrow\)\?': [0, 0, 1],
@@ -136,7 +136,7 @@ function! s:parse_weekday(str)
 	let today = todo#date#today()
 	let weekday = todo#date#weekday(today)
 	let offset = target_weekday - weekday
-	if offset < 0
+	if offset <= 0
 		let offset += 7
 	endif
 
@@ -164,7 +164,10 @@ function! todo#date#parse(str)
 
 	return todo#date#empty()
 endfunction
+" }}}
 
+
+" Format {{{
 " TODO: Localize
 let s:weekday_str = [
 			\ 	'Sat',
