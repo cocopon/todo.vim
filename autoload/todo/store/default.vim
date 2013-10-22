@@ -96,7 +96,7 @@ function! todo#store#default#store_tasks(date) dict
 	let date_str = todo#date#encode(a:date)
 	let tasks = get(self.data.tasks, date_str, [])
 
-	if len(tasks) == 0
+	if empty(tasks)
 		let self.data.tasks[date_str] = tasks
 	endif
 

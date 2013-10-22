@@ -59,7 +59,12 @@ Context Source.run()
 		ShouldEqual len(obtained_tasks), 1
 
 		" Obtained task should have id
+		let obtained_task = obtained_tasks[0]
 		Should obtained_tasks[0].id == 0
+
+		" Obtained task should not refer the original
+		let obtained_task.title = 'title changed'
+		ShouldNotEqual task.title, obtained_task.title
 	End
 
 	It gets all_tasks
