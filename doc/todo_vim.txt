@@ -1,4 +1,4 @@
-*todo_vim.txt*  Simple to-do list works with unite.vim
+*todo_vim.txt*  Lightweight to-do list works with unite.vim
 
 
 Author:     cocopon <cocopon@me.com>
@@ -24,7 +24,7 @@ Customize                      |todo_vim-customize|
 INTRODUCTION                                             *todo_vim-introduction*
 
 
-|todo.vim| is a simple to-do list works with |unite.vim|.
+|todo.vim| is a lightweight to-do list works with |unite.vim|.
 If you haven't install |unite.vim| yet, please install it before using this
 plugin:
 
