@@ -47,9 +47,12 @@ Context Source.run()
 		let store = s:new_store()
 		let task = s:new_task()
 		call store.add_task(task)
-		let obtained_tasks = store.tasks(task.date)
+
+		" Id of the original task should not be changed
+		ShouldEqual task.id, -1
 
 		" It should be obtained added task
+		let obtained_tasks = store.tasks(task.date)
 		ShouldEqual len(obtained_tasks), 1
 
 		" Obtained task should have id

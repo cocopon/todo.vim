@@ -130,12 +130,13 @@ function! todo#store#default#store_task_by_id(id) dict
 endfunction
 
 function! todo#store#default#store_add_task(task) dict
-	let a:task.id = self.data.next_id
+	let task = deepcopy(a:task)
+	let task.id = self.data.next_id
 	let self.data.next_id += 1
 	call self.gc(0)
 
-	let tasks = self.tasks(a:task.date)
-	call add(tasks, a:task)
+	let tasks = self.tasks(task.date)
+	call add(tasks, task)
 	call self.save()
 endfunction
 
