@@ -14,6 +14,7 @@ function! todo#store#default#new(path)
 	let store.data_loaded = 0
 
 	let method_names = [
+				\ 	'_raw_tasks',
 				\ 	'add_task',
 				\ 	'all_tasks',
 				\ 	'cleanup',
@@ -85,7 +86,7 @@ endfunction
 
 
 " Tasks {{{
-function! todo#store#default#store_tasks(date) dict
+function! todo#store#default#store__raw_tasks(date) dict
 	call self.load(0)
 
 	if empty(a:date)
@@ -103,13 +104,17 @@ function! todo#store#default#store_tasks(date) dict
 	return tasks
 endfunction
 
+function! todo#store#default#store_tasks(date) dict
+	return deepcopy(self._raw_tasks(a:date))
+endfunction
+
 function! todo#store#default#store_all_tasks() dict
 	call self.load(0)
 
 	let result = []
 
 	for tasks in values(self.data.tasks)
-		call extend(result, tasks)
+		call extend(result, deepcopy(tasks))
 	endfor
 
 	return result
@@ -135,7 +140,7 @@ function! todo#store#default#store_add_task(task) dict
 	let self.data.next_id += 1
 	call self.gc(0)
 
-	let tasks = self.tasks(task.date)
+	let tasks = self._raw_tasks(task.date)
 	call add(tasks, task)
 	call self.save()
 
@@ -143,7 +148,7 @@ function! todo#store#default#store_add_task(task) dict
 endfunction
 
 function! todo#store#default#store_remove_task(task) dict
-	let tasks = self.tasks(a:task.date)
+	let tasks = self._raw_tasks(a:task.date)
 	let removed = 0
 
 	let i = 0
@@ -161,7 +166,7 @@ function! todo#store#default#store_remove_task(task) dict
 endfunction
 
 function! todo#store#default#store_update_task(task) dict
-	let tasks = self.tasks(a:task.date)
+	let tasks = self._raw_tasks(a:task.date)
 	let i = 0
 	for task in tasks
 		if task.id == a:task.id

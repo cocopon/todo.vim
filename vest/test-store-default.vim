@@ -55,16 +55,38 @@ Context Source.run()
 		ShouldEqual task.id, -1
 
 		" It should be obtained added task
-		let obtained_tasks = store.tasks(task.date)
-		ShouldEqual len(obtained_tasks), 1
+		let obtained_task = store.task_by_id(id)
+		ShouldNot empty(obtained_task)
 
 		" Obtained task should have id
-		let obtained_task = obtained_tasks[0]
-		Should obtained_tasks[0].id == 0
+		ShouldEqual obtained_task.id, 0
 
-		" Obtained task should not refer the original
-		let obtained_task.title = 'title changed'
+		" Obtained task should not refer to the original
+		let obtained_task.title = 'modified'
 		ShouldNotEqual task.title, obtained_task.title
+	End
+
+	It gets tasks
+		let store = s:new_store()
+		let tasks = [
+					\ 	s:new_task(2000, 12, 31),
+					\ 	s:new_task(2000, 12, 31),
+					\ 	s:new_task(2000, 12, 30),
+					\ 	s:new_task(2000, 10, 31),
+					\ 	s:new_task(2013, 12, 31)
+					\ ]
+		for task in tasks
+			call store.add_task(task)
+		endfor
+
+		" It should be returned tasks only in the specified date
+		let date = todo#date#new(2000, 12, 31)
+		ShouldEqual len(store.tasks(date)), 2
+
+		" Returned value should not refer to the original
+		let obtained_task = store.tasks(date)[0]
+		let obtained_task.title = 'modified'
+		ShouldEqual len(filter(store.tasks(date), 'v:val.title == "modified"')), 0
 	End
 
 	It gets all_tasks
@@ -79,6 +101,11 @@ Context Source.run()
 		let task2 = s:new_task(2000, 12, 31)
 		call store.add_task(task2)
 		ShouldEqual len(store.all_tasks()), 2
+
+		" Returned value should not refer to the original
+		let obtained_task = store.all_tasks()[0]
+		let obtained_task.title = 'modified'
+		ShouldEqual len(filter(store.all_tasks(), 'v:val.title == "modified"')), 0
 	End
 
 	It gets a task by id
@@ -88,7 +115,7 @@ Context Source.run()
 
 		let obtained_task1 = store.all_tasks()[0]
 		let obtained_task2 = store.task_by_id(obtained_task1.id)
-		Should !empty(obtained_task2)
+		ShouldNot empty(obtained_task2)
 		ShouldEqual obtained_task1.id, obtained_task2.id
 	End
 
@@ -116,11 +143,10 @@ Context Source.run()
 	It updates task
 		let store = s:new_store()
 		let task = s:new_task()
-		let task.title = 'first'
 		let id = store.add_task(task)
 
 		let obtained_task1 = store.task_by_id(id)
-		let obtained_task1.title = 'second'
+		let obtained_task1.title = 'modified'
 		let updated = store.update_task(obtained_task1)
 
 		" It should be updated
@@ -128,7 +154,7 @@ Context Source.run()
 
 		" Chainging title should be applied
 		let obtained_task2 = store.task_by_id(id)
-		ShouldEqual obtained_task2.title, 'second'
+		ShouldEqual obtained_task2.title, 'modified'
 	End
 
 	call s:clean_up()
