@@ -54,8 +54,6 @@ function! todo#store#default#store_load(forced) dict
 	let data_string = join(data_list, "\<NL>")
 	let self.data = eval(data_string)
 	let self.data_loaded = 1
-
-	let g:hoge = self.data
 endfunction
 " }}}
 
