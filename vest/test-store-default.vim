@@ -70,6 +70,17 @@ Context Source.run()
 		ShouldEqual len(store.all_tasks()), 2
 	End
 
+	It gets a task by id
+		let store = s:new_store()
+		let task = s:new_task()
+		call store.add_task(task)
+
+		let obtained_task1 = store.all_tasks()[0]
+		let obtained_task2 = store.task_by_id(obtained_task1.id)
+		Should !empty(obtained_task2)
+		ShouldEqual obtained_task1.id, obtained_task2.id
+	End
+
 	It removes task
 		let store = s:new_store()
 		let task1 = s:new_task()

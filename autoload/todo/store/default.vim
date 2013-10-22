@@ -23,6 +23,7 @@ function! todo#store#default#new(path)
 				\ 	'reset',
 				\ 	'save',
 				\ 	'setup',
+				\ 	'task_by_id',
 				\ 	'tasks',
 				\ 	'update_task',
 				\ ]
@@ -89,7 +90,7 @@ function! todo#store#default#store_tasks(date) dict
 
 	if empty(a:date)
 		" TODO: Throw appropriate exception
-		throw 'Error'
+		throw 'date is empty'
 	endif
 
 	let date_str = todo#date#encode(a:date)
@@ -112,6 +113,20 @@ function! todo#store#default#store_all_tasks() dict
 	endfor
 
 	return result
+endfunction
+
+function! todo#store#default#store_task_by_id(id) dict
+	let tasks = filter(self.all_tasks(), 'v:val.id == a:id')
+	if empty(tasks)
+		return {}
+	endif
+
+	if len(tasks) > 1
+		" TODO: Throw appropriate exception
+		throw printf('conflicted task id found: %d', a:id)
+	endif
+
+	return tasks[0]
 endfunction
 
 function! todo#store#default#store_add_task(task) dict
@@ -143,22 +158,14 @@ function! todo#store#default#store_remove_task(task) dict
 endfunction
 
 function! todo#store#default#store_update_task(task) dict
-	let tasks = self.tasks(a:task.date)
-	let found = 0
+	let task = self.task_by_id(a:task.id)
 
-	let i = 0
-	for task in tasks
-		if task.id == a:task.id
-			let found = 1
-			break
-		endif
-		let i += 1
-	endfor
-
-	if found
+	if !empty(task)
 		let a:task.id = task.id
-		let task.id = -1
 		let tasks[i] = a:task
+
+		" Invalidate old task
+		let task.id = -1
 
 		call self.save()
 	endif
