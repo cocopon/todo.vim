@@ -2,8 +2,7 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
-" TODO: Temporary file path
-let s:store_path = expand('~/Desktop/todo')
+let s:store_path = tempname()
 
 
 " {{{
