@@ -8,6 +8,22 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
+function! todo#unite#task_word(task)
+	let date_str = todo#date#format('%y/%m/%d', a:task.date)
+
+	let debug_info = ''
+	if g:todo_debug_mode
+		let debug_info = printf(' (#%d)', a:task.id)
+	endif
+
+	return printf('[%s] %s %s%s',
+				\ (a:task.completed ? 'v' : '-'),
+				\ date_str,
+				\ a:task.title,
+				\ debug_info)
+endfunction
+
+
 function! todo#unite#all_tasks(args, context)
 	let store = todo#store#manager#get()
 
@@ -20,9 +36,8 @@ function! todo#unite#all_tasks(args, context)
 	let candidates = []
 
 	for task in tasks
-		let date_str = todo#date#format('%y/%m/%d', task.date)
 		let candidate = {
-					\ 	'word': printf('[%s] %s %s', (task.completed ? 'v' : '-'), date_str, task.title),
+					\ 	'word': todo#unite#task_word(task),
 					\ 	'source': 'todo',
 					\ 	'kind': 'todo',
 					\ 	'action__task': task,
