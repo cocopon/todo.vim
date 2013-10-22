@@ -2,11 +2,12 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 
+" {{{
 let s:store_path = tempname()
 
 
-" {{{
 function! s:rand(min, max)
+	" http://vim-users.jp/2009/11/hack98/
 	let match_end = matchend(reltimestr(reltime()), '\d\+\.') + 1
 	return a:min + reltimestr(reltime())[l:match_end : ] % ((a:max - a:min) + 1)
 endfunction
@@ -21,7 +22,6 @@ function! s:new_store()
 	call s:clean_up()
 	return todo#store#default#new(s:store_path)
 endfunction
-" }}}
 
 
 function! s:new_task(...)
@@ -39,6 +39,7 @@ function! s:new_task(...)
 	let title = 'title'
 	return todo#task#new(date, title)
 endfunction
+" }}}
 
 
 Context Source.run()
