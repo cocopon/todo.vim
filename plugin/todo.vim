@@ -4,6 +4,10 @@
 " License: MIT License
 
 
+let s:save_cpo = &cpo
+set cpo&vim
+
+
 command! -nargs=? TodoAdd call todo#add(<f-args>)
 
 
@@ -18,4 +22,4 @@ call s:initialize()
 " }}}
 
 
-" vim: set foldmethod=marker:
+let &cpo = s:save_cpo
