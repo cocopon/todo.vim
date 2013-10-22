@@ -46,7 +46,10 @@ Context Source.run()
 	It adds task
 		let store = s:new_store()
 		let task = s:new_task()
-		call store.add_task(task)
+		let id = store.add_task(task)
+
+		" Returned id should have a valid value
+		Should id >= 0
 
 		" Id of the original task should not be changed
 		ShouldEqual task.id, -1
@@ -88,16 +91,20 @@ Context Source.run()
 		let store = s:new_store()
 		let task1 = s:new_task()
 		let task2 = s:new_task()
-		call store.add_task(task1)
-		call store.add_task(task2)
+		let id1 = store.add_task(task1)
+		let id2 = store.add_task(task2)
 
 		" It should be found obtained task
-		let tasks = filter(store.all_tasks(), 'v:val.id == task1.id')
+		let tasks = filter(store.all_tasks(), 'v:val.id == id1')
 		ShouldEqual len(tasks), 1
 
+		" It should be removed
+		let obtained_task1 = store.task_by_id(id1)
+		let removed = store.remove_task(obtained_task1)
+		Should removed
+
 		" It should be not found obtained task
-		call store.remove_task(task1)
-		let tasks = filter(store.all_tasks(), 'v:val.id == task1.id')
+		let tasks = filter(store.all_tasks(), 'v:val.id == id1')
 		ShouldEqual len(tasks), 0
 	End
 

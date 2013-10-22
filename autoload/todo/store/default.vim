@@ -138,6 +138,8 @@ function! todo#store#default#store_add_task(task) dict
 	let tasks = self.tasks(task.date)
 	call add(tasks, task)
 	call self.save()
+
+	return task.id
 endfunction
 
 function! todo#store#default#store_remove_task(task) dict
