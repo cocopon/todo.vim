@@ -146,6 +146,28 @@ endfunction
 " }}}
 
 
+" {{{
+let s:kind.action_table.unite__new_candidate = {
+			\ 	'description': 'new task',
+			\ 	'is_invalidate_cache': 1,
+			\ 	'is_selectable': 1,
+			\ 	'is_quit': 0
+			\ }
+function! s:kind.action_table.unite__new_candidate.func(candidates)
+	if type(a:candidates) == type([])
+		let candidate = sort(a:candidates, function('s:compare_candidate_id_desc'))[0]
+	else
+		let candidate = a:candidates
+	endif
+
+	let task = candidate.action__task
+
+	" TODO: Pass selected date parameter
+	call todo#add()
+endfunction
+" }}}
+
+
 function! s:set_candidates_state(candidates, state)
 	if type(a:candidates) == type([])
 		let candidates = a:candidates
