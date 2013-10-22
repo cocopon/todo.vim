@@ -62,7 +62,7 @@ Context Source.run()
 		Should obtained_tasks[0].id == 0
 	End
 
-	It checks all_tasks
+	It gets all_tasks
 		let store = s:new_store()
 		ShouldEqual len(store.all_tasks()), 0
 
@@ -106,6 +106,24 @@ Context Source.run()
 		" It should be not found obtained task
 		let tasks = filter(store.all_tasks(), 'v:val.id == id1')
 		ShouldEqual len(tasks), 0
+	End
+
+	It updates task
+		let store = s:new_store()
+		let task = s:new_task()
+		let task.title = 'first'
+		let id = store.add_task(task)
+
+		let obtained_task1 = store.task_by_id(id)
+		let obtained_task1.title = 'second'
+		let updated = store.update_task(obtained_task1)
+
+		" It should be updated
+		Should updated
+
+		" Chainging title should be applied
+		let obtained_task2 = store.task_by_id(id)
+		ShouldEqual obtained_task2.title, 'second'
 	End
 
 	call s:clean_up()

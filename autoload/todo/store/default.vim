@@ -161,19 +161,25 @@ function! todo#store#default#store_remove_task(task) dict
 endfunction
 
 function! todo#store#default#store_update_task(task) dict
-	let task = self.task_by_id(a:task.id)
+	let tasks = self.tasks(a:task.date)
+	let i = 0
+	for task in tasks
+		if task.id == a:task.id
+			let found = 1
+			break
+		endif
 
-	if !empty(task)
-		let a:task.id = task.id
-		let tasks[i] = a:task
+		let i += 1
+	endfor
 
-		" Invalidate old task
-		let task.id = -1
-
-		call self.save()
+	if !found
+		return 0
 	endif
 
-	return found
+	let tasks[i] = deepcopy(a:task)
+	call self.save()
+
+	return 1
 endfunction
 
 function! todo#store#default#store_gc(forced) dict
